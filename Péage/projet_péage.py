@@ -9,8 +9,20 @@ class Peage:
         self._nombre_de_files = nombre_de_files
         self._files = [File() for i in range(nombre_de_files)]
 
-        return numero_de_file, file
+    def comparer_files(self):
+        nb_elts = 9000000
+        for i, j in enumerate(self._files):
+            if j.est_vide() == True:
+                nb_elts = 0
+                numero_de_file = i
+                file = j
+                continue
+            if j.nb_elts() < nb_elts:
+                nb_elts = j.nb_elts()
+                numero_de_file = i
+                file = j
 
+        return numero_de_file, file
 
     def ajouter(self,voiture):
         """ A COMMENTER """
@@ -19,7 +31,7 @@ class Peage:
 
         file_a_utiliser.ajouter(voiture)
         #print(f"Affichage de la voiture sur la file {numero_de_file}")
-        #voiture.afficher(numero_de_file)
+        voiture.afficher(numero_de_file,position)
 
         # Je suis en première position
         if file_a_utiliser.nb_elts() == 1:
@@ -49,16 +61,13 @@ class Peage:
                     pass
 
             # gestion de l'affichage de toutes les voitures de la file
-            for elt in file.elts():
+            for position, elt in enumerate (file.elts):
                 voiture = elt.val
-                dessine_voiture()
-
+                voiture.afficher(numero_de_file,position)
 
             for rang_vide in range(file.nb_elts(), rang_final):
-                # voiture invisible
                 voiture = Voiture()
-                #dessine_voiture()
-
+                voiture.afficher(numero_de_file,position)
 
 
 class Voiture:
@@ -72,11 +81,11 @@ class Voiture:
         time.sleep(0.5)
         return random.choice([True, False])
 
-    def afficher(self,numero_de_file):
-        self._animation.dessiner(numero_de_file,self._couleur,self._rang)
+    def afficher(self,numero_de_file,position):
+        self._animation.dessiner(numero_de_file,self._couleur,position)
 
     def effacer(self):
-        self._animation.dessiner(numero_de_file,self._couleur,self._rang)
+        self._animation.dessiner(numero_de_file,self._couleur,position)
 
 
 class Animation:
@@ -98,10 +107,13 @@ class Animation:
             p2 = (800,105+105*numero_de_file)
             graphics.draw_fill_rectangle(p1,p2,graphics.blanc,self._fenetre)
 
-    def dessiner(self,numero_de_file,couleur):
+    def dessiner(self,numero_de_file,couleur,position):
         p1 = (710,30+105*numero_de_file)
         p2 = (790,70+105*numero_de_file)
         graphics.draw_fill_rectangle(p1,p2,couleur,self._fenetre)
+        p3 = (710,30+105*position)
+        p4 = (790,70+105*position)
+        graphics.draw_fill_rectangle(p3,p4,couleur,self._fenetre)
 
 
 class Projet_final:
