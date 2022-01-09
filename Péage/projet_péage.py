@@ -19,7 +19,7 @@ class Projet_final:
             time.sleep(2)
 
             # Creer voiture
-            voiture = Voiture(animation)
+            voiture = Voiture(animation,couleur = graphics.rouge)
 
             # Ajouter voiture dans péage
             peage.ajouter(voiture)
@@ -78,6 +78,7 @@ class Peage:
         """ A COMMENTER """
         print(f"On vérifie les files")
         for numero_de_file, file in enumerate(self._files):
+            nb_elts = 0
             if file.est_vide() == True:
                 continue
             else:
@@ -88,7 +89,12 @@ class Peage:
                 else:
                     pass
 
-            for position in range (0,file.nb_elts()):
+            if file.est_vide() == True:
+                nb_elts = 0
+            else:
+                nb_elts = file.nb_elts()
+
+            for position in range (0,nb_elts):
                 voiture = file.tete.val
                 # affiche pas la voiture au dessus
                 if position <= 4:
@@ -101,7 +107,7 @@ class Peage:
                 file.retirer()
                 file.ajouter(voiture)
             #nombre maxi de voiture
-            for position_vide in range(file.nb_elts()+1,4):
+            for position_vide in range(nb_elts+1,4):
                 voiture = Voiture(animation,graphics.gris)
                 voiture.afficher(numero_de_file,position_vide)
 
@@ -114,7 +120,8 @@ class Voiture:
 
     def temps_ecoule(self):
         time.sleep(0.5)
-        return random.choice([True, False])
+        #return random.choice([True, False])
+        return False
 
     def afficher(self,numero_de_file,position):
         self._animation.dessiner(numero_de_file,self._couleur,position)
@@ -140,13 +147,10 @@ class Animation:
             graphics.draw_fill_rectangle(p1,p2,graphics.blanc,self._fenetre)
 
     def dessiner(self,numero_de_file,couleur,position):
-        p1 = (710,30+105*numero_de_file)
-        p2 = (790,70+105*numero_de_file)
+        p1 = (10+100*position,30+105*numero_de_file)
+        p2 = (90+100*position,70+105*numero_de_file)
+        print(f"p1 et p2 {p1},{p2},{couleur}")
         graphics.draw_fill_rectangle(p1,p2,couleur,self._fenetre)
-        p3 = (710,30+105*position)
-        p4 = (790,70+105*position)
-        graphics.draw_fill_rectangle(p3,p4,couleur,self._fenetre)
-
 
 
 # Instancie un objet de type Projet_final
