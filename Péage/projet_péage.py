@@ -17,13 +17,10 @@ class Projet_final:
         while True:
             # Temporisation
             time.sleep(2)
-
             # Creer voiture
-            voiture = Voiture(animation,couleur = graphics.rouge)
-
+            voiture = Voiture(animation, couleur = random.choice([graphics.rouge, graphics.jaune, graphics.vert, graphics.bleu]))
             # Ajouter voiture dans péage
             peage.ajouter(voiture)
-
             # Vérifier l'état des files
             peage.verifier_files(animation)
 
@@ -36,7 +33,7 @@ class Peage:
         self._files = [File() for i in range(nombre_de_files)]
 
     def comparer_files(self):
-        nb_elts = 9000000
+        nb_elts = 99
         for i, j in enumerate(self._files):
             if j.est_vide() == True:
                 nb_elts = 0
@@ -48,66 +45,78 @@ class Peage:
                 numero_de_file = i
                 file = j
 
+        print(f"La file {numero_de_file} est choisie car elle contient {nb_elts} voiture(s)")
         return numero_de_file, file
+
 
     def ajouter(self,voiture):
         """ A COMMENTER """
         numero_de_file, file_a_utiliser = self.comparer_files()
         print(f"Ajout d'une voiture sur la file {numero_de_file}")
-
         file_a_utiliser.ajouter(voiture)
-        print(f"Affichage de la voiture sur la file {numero_de_file}")
-        """
-        voiture.afficher(numero_de_file,position)
-        """
 
+        # La voiture n'est pas première donc elle attends
         # Je suis en première position
         if file_a_utiliser.nb_elts() == 1:
-            print(f"Voiture en première position")
+            print("La voiture est en première position")
             if voiture.temps_ecoule() == True:
-                print(f"Temps écoulé, la voiture disparaît")
+                print(f"Le temps est écoulé, la voiture disparaît")
                 file_a_utiliser.retirer()
             else:
-                print(f"Il reste du temps, la voiture reste là")
+                print("Il reste du temps, la voiture reste là")
                 pass
-        # Je ne suis pas premier donc j'attends
+        # La voiture n'est pas première donc elle attends
         else:
+            print("La voiture n'est pas en première position")
             pass
+
 
     def verifier_files(self,animation):
         """ A COMMENTER """
-        print(f"On vérifie les files")
+        print(f"On vérifie les files pour afficher les voitures")
         for numero_de_file, file in enumerate(self._files):
-            nb_elts = 0
+            print(f"On vérifie la file {numero_de_file}")
+
             if file.est_vide() == True:
+                print(f"La file {numero_de_file} est vide")
                 continue
             else:
                 voiture = file.tete.val
+                print(f"La voiture {voiture} est en tête de file")
                 if voiture.temps_ecoule() == True:
                     # Gestion de File
                     file.retirer()
+                    print(f"Le temps est écoulé pour la voiture, on la retire")
                 else:
-                    pass
+                    print(f"Il reste du temps pour la voiture, elle reste au péage")
+
+            nb_elts = 0
 
             if file.est_vide() == True:
                 nb_elts = 0
             else:
                 nb_elts = file.nb_elts()
 
-            for position in range (0,nb_elts):
+            print(f"La file {numero_de_file} contient {nb_elts} voitures")
+
+            for position in range (0, nb_elts):
+                print(f"Voiture en position {position}")
                 voiture = file.tete.val
-                # affiche pas la voiture au dessus
+                # On n'affiche pas la voiture au dessus
                 if position <= 4:
+                    print("On dessine la voiture")
                     voiture.afficher(numero_de_file,position)
                 else:
-                    # je n'affiche plus la voiture car elle est trop loin
-                    pass
+                    # On n'affiche plus la voiture car elle est trop loin
+                    print("On ne dessine pas la voiture")
 
-                # On retire la voiture de la position 1 et la met à la fin
+                # On retire la voiture de la position 1 et on là met à la fin
                 file.retirer()
                 file.ajouter(voiture)
-            #nombre maxi de voiture
-            for position_vide in range(nb_elts+1,4):
+
+            # Nombre maximum de voiture (4) qui sont par file
+            for position_vide in range(nb_elts, 4):
+                print(f"On efface la voiture en position {position_vide}")
                 voiture = Voiture(animation,graphics.gris)
                 voiture.afficher(numero_de_file,position_vide)
 
@@ -120,8 +129,8 @@ class Voiture:
 
     def temps_ecoule(self):
         time.sleep(0.5)
-        #return random.choice([True, False])
-        return False
+        # Le pourcentage est de 25 % pour vrai et 75 % pour faux
+        return random.choice([True, False, False, False])
 
     def afficher(self,numero_de_file,position):
         self._animation.dessiner(numero_de_file,self._couleur,position)
@@ -147,8 +156,8 @@ class Animation:
             graphics.draw_fill_rectangle(p1,p2,graphics.blanc,self._fenetre)
 
     def dessiner(self,numero_de_file,couleur,position):
-        p1 = (10+100*position,30+105*numero_de_file)
-        p2 = (90+100*position,70+105*numero_de_file)
+        p1 = (10+100*position,30+105*numero_de_file - 1)
+        p2 = (90+100*position,70+105*numero_de_file - 1)
         print(f"p1 et p2 {p1},{p2},{couleur}")
         graphics.draw_fill_rectangle(p1,p2,couleur,self._fenetre)
 
@@ -156,7 +165,7 @@ class Animation:
 # Instancie un objet de type Projet_final
 projet_final = Projet_final()
 
-# Démarre le péage
+# Démarre le péage et éteint le péage
 try:
     projet_final.start()
 except KeyboardInterrupt:
